@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BG Gayeb Koro ✨ — AI Background Remover</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Background Decorative Orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <!-- Floating Glass Navbar -->
+    <header class="glass-header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <span>BG Gayeb Koro</span>
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="#hero" class="nav-link active">Home</a>
+                <a href="#editor-section" class="nav-link">Studio</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#about" class="nav-link">About</a>
+            </nav>
+            <div class="nav-actions">
+                <button id="themeToggle" class="glass-btn icon-btn" title="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero & Upload Section -->
+        <section id="hero" class="hero-section">
+            <div class="container">
+                <div class="hero-content">
+                    <span class="badge glass-badge"><i class="fa-solid fa-bolt"></i> Powered by Browser AI</span>
+                    <h1 class="hero-title">Background Gayeb Koro ✨</h1>
+                    <p class="hero-subtitle">Remove image backgrounds instantly with high-precision AI. Create transparent PNGs and stunning new backdrops in seconds right in your browser.</p>
+                </div>
+
+                <!-- Glass Upload Card -->
+                <div class="glass-card upload-card" id="dropZone">
+                    <input type="file" id="fileInput" accept="image/jpeg, image/jpg, image/png, image/webp" hidden>
+                    <div class="upload-icon-wrapper">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <h3>Drag & Drop your image here</h3>
+                    <p>Supports JPEG, PNG, WebP (Max 15MB)</p>
+                    <button class="glass-btn primary-btn" id="chooseImgBtn">
+                        <i class="fa-solid fa-folder-open"></i> Choose Image
+                    </button>
+                    <div class="privacy-badge">
+                        <i class="fa-solid fa-shield-halved"></i> 100% Private: Processed locally in your browser. No server uploads.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Processing & Studio Section (Hidden initially) -->
+        <section id="editor-section" class="editor-section hidden">
+            <div class="container">
+                <div class="section-header">
+                    <h2>AI Editing Studio</h2>
+                    <p>Fine-tune your background and export in ultra HD.</p>
+                </div>
+
+                <div class="studio-grid">
+                    <!-- Left Column: Preview & Workspace -->
+                    <div class="glass-card workspace-card">
+                        <div class="workspace-toolbar">
+                            <div class="view-toggles">
+                                <button class="tool-tab active" id="tabProcessed" data-view="processed">Result</button>
+                                <button class="tool-tab" id="tabOriginal" data-view="original">Original</button>
+                                <button class="tool-tab" id="tabCompare" data-view="compare">Comparison</button>
+                            </div>
+                            <div class="zoom-controls">
+                                <button class="glass-btn sm-btn" id="zoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                                <span id="zoomLevel" class="zoom-text">100%</span>
+                                <button class="glass-btn sm-btn" id="zoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                                <button class="glass-btn sm-btn" id="zoomReset" title="Reset View"><i class="fa-solid fa-rotate-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Display Area -->
+                        <div class="canvas-viewport" id="canvasViewport">
+                            <div class="checkerboard-bg" id="checkerboardBg"></div>
+                            <canvas id="renderCanvas"></canvas>
+                            
+                            <!-- Loading State Overlay -->
+                            <div class="processing-overlay" id="processingOverlay">
+                                <div class="spinner-ring"></div>
+                                <h3 id="processStatusText">Initializing AI Model...</h3>
+                                <p id="processSubText">First run downloads lightweight WebAssembly weights (~40MB).</p>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Info Bar -->
+                        <div class="image-meta-bar">
+                            <span id="imageFileName"><i class="fa-solid fa-image"></i> image.png</span>
+                            <span id="imageDimensions">0 x 0 px</span>
+                            <button class="text-btn danger-text" id="clearImageBtn"><i class="fa-solid fa-trash"></i> Remove Image</button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Controls & Background Studio -->
+                    <div class="glass-card controls-card">
+                        <!-- AI Process Trigger (shown before processing) -->
+                        <div class="action-panel" id="actionPanel">
+                            <h3>Ready for AI Magic?</h3>
+                            <p>Our browser AI will detect and segment the subject precisely.</p>
+                            <button class="glass-btn primary-btn glow-btn lg-btn" id="removeBgBtn">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Remove Background Now
+                            </button>
+                        </div>
+
+                        <!-- Background Customizer (shown after processing) -->
+                        <div class="customizer-panel hidden" id="customizerPanel">
+                            <h3><i class="fa-solid fa-palette"></i> Background Studio</h3>
+                            
+                            <div class="control-group">
+                                <label>Background Type</label>
+                                <div class="bg-type-selector">
+                                    <button class="bg-type-btn active" data-bg="transparent">Transparent</button>
+                                    <button class="bg-type-btn" data-bg="solid">Solid Color</button>
+                                    <button class="bg-type-btn" data-bg="gradient">Gradient</button>
+                                    <button class="bg-type-btn" data-bg="custom">Custom Image</button>
+                                </div>
+                            </div>
+
+                            <!-- Solid Color Options -->
+                            <div class="control-sub-group" id="solidControlGroup" style="display: none;">
+                                <label>Pick Solid Color</label>
+                                <div class="color-presets">
+                                    <button class="color-preset active" style="background: #ffffff;" data-color="#ffffff" title="White"></button>
+                                    <button class="color-preset" style="background: #000000;" data-color="#000000" title="Black"></button>
+                                    <button class="color-preset" style="background: #38bdf8;" data-color="#38bdf8" title="Sky Blue"></button>
+                                    <button class="color-preset" style="background: #ef4444;" data-color="#ef4444" title="Red"></button>
+                                    <button class="color-preset" style="background: #10b981;" data-color="#10b981" title="Green"></button>
+                                    <button class="color-preset" style="background: #8b5cf6;" data-color="#8b5cf6" title="Purple"></button>
+                                    <input type="color" id="customColorPicker" value="#38bdf8" title="Custom Color">
+                                </div>
+                            </div>
+
+                            <!-- Gradient Options -->
+                            <div class="control-sub-group" id="gradientControlGroup" style="display: none;">
+                                <label>Gradient Presets</label>
+                                <div class="gradient-presets">
+                                    <button class="gradient-preset active" style="background: linear-gradient(135deg, #38bdf8, #818cf8);" data-grad="linear-gradient(135deg, #38bdf8, #818cf8)"></button>
+                                    <button class="gradient-preset" style="background: linear-gradient(135deg, #f43f5e, #fb923c);" data-grad="linear-gradient(135deg, #f43f5e, #fb923c)"></button>
+                                    <button class="gradient-preset" style="background: linear-gradient(135deg, #10b981, #3b82f6);" data-grad="linear-gradient(135deg, #10b981, #3b82f6)"></button>
+                                    <button class="gradient-preset" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);" data-grad="linear-gradient(135deg, #8b5cf6, #ec4899)"></button>
+                                </div>
+                            </div>
+
+                            <!-- Custom Background Upload -->
+                            <div class="control-sub-group" id="customBgControlGroup" style="display: none;">
+                                <label>Upload Background Photo</label>
+                                <input type="file" id="bgImageInput" accept="image/*" hidden>
+                                <button class="glass-btn sm-btn full-w-btn" id="uploadBgImgBtn">
+                                    <i class="fa-solid fa-image"></i> Choose Background Image
+                                </button>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <!-- Export Options -->
+                            <h3><i class="fa-solid fa-download"></i> Export & Download</h3>
+                            <div class="export-buttons-grid">
+                                <button class="glass-btn primary-btn" id="downloadPngBtn">
+                                    <i class="fa-solid fa-file-arrow-down"></i> PNG (HD)
+                                </button>
+                                <button class="glass-btn secondary-btn" id="downloadJpgBtn">
+                                    <i class="fa-solid fa-file-image"></i> JPG (Solid)
+                                </button>
+                                <button class="glass-btn secondary-btn" id="downloadWebpBtn">
+                                    <i class="fa-solid fa-globe"></i> WebP
+                                </button>
+                            </div>
+
+                            <button class="glass-btn outline-btn full-w-btn mt-16" id="reprocessBtn">
+                                <i class="fa-solid fa-rotate"></i> Process New Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="info-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>How BG Gayeb Koro Works</h2>
+                    <p>Experience ultra-fast AI background removal in 3 simple steps.</p>
+                </div>
+                <div class="steps-grid">
+                    <div class="glass-card step-card">
+                        <div class="step-num">01</div>
+                        <h3>Upload Image</h3>
+                        <p>Drag and drop any portrait, product photo, pet, or graphic into the app.</p>
+                    </div>
+                    <div class="glass-card step-card">
+                        <div class="step-num">02</div>
+                        <h3>AI Segmentation</h3>
+                        <p>Our ONNX WebAssembly AI model instantly isolates the subject with pixel-level precision.</p>
+                    </div>
+                    <div class="glass-card step-card">
+                        <div class="step-num">03</div>
+                        <h3>Customize & Download</h3>
+                        <p>Add custom solid colors, gradients, or backdrops and download in pristine HD.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="info-section">
+            <div class="container">
+                <div class="glass-card about-card">
+                    <h2>About BG Gayeb Koro</h2>
+                    <p><strong>BG Gayeb Koro</strong> is crafted to provide lightning-fast, privacy-first background removal directly in your web browser without sending your sensitive photos to external servers.</p>
+                    <div class="tech-stack-badges">
+                        <span class="tech-badge">HTML5 Canvas</span>
+                        <span class="tech-badge">CSS Glassmorphism</span>
+                        <span class="tech-badge">WebAssembly AI</span>
+                        <span class="tech-badge">@imgly/background-removal</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-footer">
+        <div class="container footer-flex">
+            <p>&copy; 2026 BG Gayeb Koro. All rights reserved.</p>
+            <p class="creator-credit">Made with ❤️ by Alpha.HR</p>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript Module -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
